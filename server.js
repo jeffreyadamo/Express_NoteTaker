@@ -14,9 +14,13 @@ var PORT = process.env.PORT || 3000;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.use(serveStatic(path.join(__dirname, 'public')))
-app.use(serveStatic(path.join(__dirname, 'db')))
+// Sets up serve-static middleware for Express to access folders
+// =============================================================
+var public = path.join(__dirname, "public");
+var db = path.join(__dirname, "db");
 
+app.use(serveStatic(public));
+app.use(serveStatic(db));
 
 // Sets up the array the notes will be pushed into as JSON objects
 var notes = [];
@@ -25,22 +29,27 @@ var notes = [];
 // Routes
 // =============================================================
 
-var public = path.join(__dirname, "public")
 
 app.get("/notes", function(req, res){
     res.sendFile(path.join(public, "notes.html"))
 })
-app.use('/notes', express.static(public));
-
+app.get("/api/notes", function(req, res){
+    res.sendFile(path.join(db, "db.json"))
+    
+    // return res.json(db.json) //this needs to read the db.json and return all saved notes as JSON
+})
 
 app.get('*', function(req, res) {
     res.sendFile(path.join(public, 'index.html'));
 });
-app.use('*', express.static(public));
+// I dont' think this does anything:
+// app.use('/notes', express.static(public));
+// app.use('*', express.static(public));
 
-// app.get("/api/notes", function(req, res){
-//     return res.json(db.json) //this needs to read the db.json and return all saved notes as JSON
-// })
+
+
+
+
 
 // app.post("api/notes", function(req, res){
 //     var newNotes = req.body;
