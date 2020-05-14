@@ -33,12 +33,11 @@ var notes = [];
 app.get("/notes", function(req, res){
     res.sendFile(path.join(public, "notes.html"))
 })
+
 app.get("/api/notes", function(req, res){
     res.sendFile(path.join(db, "db.json"))
-    
-    // return res.json(db.json) //this needs to read the db.json and return all saved notes as JSON
 })
-
+//the '*' indicates anything other path will return with index.html
 app.get('*', function(req, res) {
     res.sendFile(path.join(public, 'index.html'));
 });
@@ -51,14 +50,19 @@ app.get('*', function(req, res) {
 
 
 
-// app.post("api/notes", function(req, res){
-//     var newNotes = req.body;
+app.post("/api/notes", function(req, res){
+    var newNote = req.body;
+    console.log = newNote;
+    //I think I need to push newNote to db.json here: this will append a JSON object to the db.json file, but not inside the array.
+    fs.appendFile(path.join(db, "db.json"), JSON.stringify(newNote), 'utf8', function(err){
+        if(err) throw err;
+    });
 
-//     newNotes.routeName = newNotes.name.replace(/\s+/g, "").toLowerCase();
-//     notes.push(newNotes);
-//     res.json(newNotes);
+    // notes.push(newNote);
+    res.json(newNote);
+    
 
-// })
+})
 
 // Starts the server to begin listening
 // =============================================================
