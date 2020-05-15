@@ -25,7 +25,7 @@ app.use(serveStatic(db));
 // Sets up the array the notes will be pushed into as JSON objects
 var notes = [];
 
-// Routes
+// GET Routes
 // =============================================================
 
 app.get("/notes", function (req, res) {
@@ -38,62 +38,71 @@ app.get("/api/notes", function (req, res) {
      var savedData=JSON.parse(data)
      return res.json(savedData)
  })
+
 });
 //the '*' indicates anything other path will return with index.html
 app.get("*", function (req, res) {
   res.sendFile(path.join(public, "index.html"));
 });
-// I dont' think this does anything:
-// app.use('/notes', express.static(public));
-// app.use('*', express.static(public));
+// POST Routes
+// =============================================================
 
 app.post("/api/notes", function (req, res) {
-  //Turn the posted object into a variable
+  // Turn the posted object into a variable
   var newNote = req.body;
-  console.log("newNote is " + newNote);
+  console.log("newNote comes in as " + newNote);
+  newNote.id = 0;
+  console.log("newNote now has an id " + newNote);
+  console.log("--------------------");
 
-  //I want to push data into "notes" variable
-  console.log("note is empty" + notes);
-
-  //I want to read db.json, set its contents as a variable array, then push the new note into the array. Then i want to rewrite the db.json file anew.
-
-  // var readNote = fs.readFile(path.join(db, "db.json"),'utf8', function(err){
-  //     if(err) throw err;
-  // })
-  var readNote = [];
-  console.log("readNote is empty" + readNote);
-
+  // Read current db.json, parse its contents into a variable, then push the newNote into the array.
   fs.readFile("db/db.json", "utf8", function (err, data) {
     if (err) throw err;
-
-    console.log("data is " + data);
-    // readNote.push(JSON.parse(data));
+    console.log("data from db.json was " + data);
     var storedData =JSON.parse(data);
+    newNote.id=(storedData.length+1);
+    console.log("newNote has an update id " + newNote)
     storedData.push(newNote);
-    console.log("data is now" + storedData);
+    console.log("data in " + storedData);
 
-    // notes.push(readNote);
-    // console.log("notes is now " + notes);
-    // notes.push(newNote);
-    // console.log("notes is now " + notes);
-
-    //Write new db.json file
+    //Write the new array as the db.json file will overwrite the file
     fs.writeFile( "db/db.json", JSON.stringify(storedData), function (err) {
         if (err) throw err;
-
-        //What does this do?
-      console.log("Done");
-      
-      }
-    );
+      console.log("newNote added to db.json");
+     });
     res.json(true)
   });
 });
-app.delete("/api/notes/:id", function(req,res){
-    //readFile
-    // fine the index of what you need to delete and use smtng like splice (index,1)
-})
 
+//DELETE Routes
+// =============================================================
+
+app.delete("/api/notes/:id", function(req,res){
+  var deleteId = req.params.id
+  console.log("deleteId = "+ deleteId)
+  fs.readFile("db/db.json", "utf8", function (err, data) {
+    if (err) throw err;
+    var storedData =JSON.parse(data);
+    for (var i=0; i<storedData.length; i++){
+      if (deleteId===[i]){
+        storedData = storedData.splice(deleteId,1);
+        return storedData
+      } else{
+        console.log("something went wrong in splicing loop")
+      }
+    }
+    
+    fs.writeFile( "db/db.json", JSON.stringify(storedData), function (err) {
+      if (err) throw err;
+    console.log("Something was spliced");
+   });
+
+
+    //readFile
+    // find the index of what you need to delete and use smtng like splice (index,1)
+    res.json(storedData);
+})
+});
 // Starts the server to begin listening
 // =============================================================
 app.listen(PORT, function () {
