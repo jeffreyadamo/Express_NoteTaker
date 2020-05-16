@@ -51,18 +51,25 @@ app.post("/api/notes", function (req, res) {
   // Turn the posted object into a variable
   var newNote = req.body;
   console.log("newNote comes in as " + newNote);
-  newNote.id = 0;
-  console.log("newNote now has an id " + newNote);
+  console.log("newNote comes can be read as " + JSON.stringify(newNote));
   console.log("--------------------");
 
   // Read current db.json, parse its contents into a variable, then push the newNote into the array.
   fs.readFile("db/db.json", "utf8", function (err, data) {
     if (err) throw err;
     console.log("data from db.json was " + data);
+
     var storedData =JSON.parse(data);
-    newNote.id=(storedData.length+1);
+    console.log("--------------------");
+
+
+
     console.log("newNote has an update id " + newNote)
     storedData.push(newNote);
+        //Here's where I need to run a loop to assign/reassign id's
+        for (var i=0; i<storedData.length; i++){
+          storedData[i].id = parseInt([i])+1;
+        };
     console.log("data in " + storedData);
 
     //Write the new array as the db.json file will overwrite the file
