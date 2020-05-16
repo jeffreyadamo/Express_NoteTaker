@@ -57,27 +57,27 @@ app.post("/api/notes", function (req, res) {
   // Read current db.json, parse its contents into a variable, then push the newNote into the array.
   fs.readFile("db/db.json", "utf8", function (err, data) {
     if (err) throw err;
-    console.log("data from db.json was " + data);
+    console.log("data from db.json come in as: " + data);
 
     var storedData =JSON.parse(data);
     console.log("--------------------");
 
-
-
-    console.log("newNote has an update id " + newNote)
     storedData.push(newNote);
         //Here's where I need to run a loop to assign/reassign id's
         for (var i=0; i<storedData.length; i++){
           storedData[i].id = parseInt([i])+1;
         };
-    console.log("data in " + storedData);
+    console.log("storedData with new note and id's is: " + storedData);
+    console.log("--------------------");
 
-    //Write the new array as the db.json file will overwrite the file
+    // Write the new array as the db.json file will overwrite the file
     fs.writeFile( "db/db.json", JSON.stringify(storedData), function (err) {
         if (err) throw err;
-      console.log("newNote added to db.json");
+        console.log("newNote added to db.json");
+        console.log("--------------------");
+        console.log("--------------------");
      });
-    res.json(true)
+    res.json(true);
   });
 });
 
@@ -86,18 +86,17 @@ app.post("/api/notes", function (req, res) {
 
 app.delete("/api/notes/:id", function(req,res){
   var deleteId = req.params.id
-  console.log("deleteId = "+ deleteId)
+  console.log("=====================");
+  console.log("Item to delete is deleteId = "+ deleteId)
   fs.readFile("db/db.json", "utf8", function (err, data) {
     if (err) throw err;
+    // var storedData =JSON.parse(data);
     var storedData =JSON.parse(data);
+    storedData.splice((deleteId-1),1)
     for (var i=0; i<storedData.length; i++){
-      if (deleteId===[i]){
-        storedData = storedData.splice(deleteId,1);
-        return storedData
-      } else{
-        console.log("something went wrong in splicing loop")
-      }
-    }
+      storedData[i].id = parseInt([i])+1;
+    };
+
     
     fs.writeFile( "db/db.json", JSON.stringify(storedData), function (err) {
       if (err) throw err;
