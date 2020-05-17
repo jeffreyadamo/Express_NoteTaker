@@ -92,7 +92,7 @@ app.delete("/api/notes/:id", function(req,res){
     console.log("---------------------------------------------------");
    });
     res.json(storedData);
-})
+  })
 });
 
 // Start the server to begin listening
