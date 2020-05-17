@@ -27,7 +27,6 @@ var storedData = [];
 
 // GET Routes
 // =============================================================
-
 app.get("/notes", function (req, res) {
   res.sendFile(path.join(public, "notes.html"));
 })
@@ -45,69 +44,64 @@ app.get("*", function (req, res) {
 
 // POST Routes
 // =============================================================
-
 app.post("/api/notes", function (req, res) {
   // Turn the posted object into a variable
   var newNote = req.body;
-  console.log("newNote comes in as " + newNote);
-  console.log("newNote comes can be read as " + JSON.stringify(newNote));
-  console.log("--------------------");
 
-  // Read current db.json, parse its contents into a variable, then push the newNote into the array.
+  // Read current db.json, parse its contents into a storedData array; push the newNote into the array
   fs.readFile("db/db.json", "utf8", function (err, data) {
     if (err) throw err;
-    console.log("data from db.json come in as: " + data);
-
     storedData = JSON.parse(data);
-    console.log("--------------------");
-
     storedData.push(newNote);
-    
-    //Index throug the array a loop to assign/reassign id's 
+    console.log("newNote added to db.json");
+
+    // Index through the storedData array to assign/reassign id's 
     for (var i=0; i<storedData.length; i++){
       storedData[i].id = parseInt([i])+1;
     };
-    console.log("storedData with new note and id's is: " + storedData);
-    console.log("--------------------");
 
-    // Write the new array as the db.json file will overwrite the file
+    // Overwrite the db.json file with newNote included
     fs.writeFile( "db/db.json", JSON.stringify(storedData), function (err) {
         if (err) throw err;
-        console.log("newNote added to db.json");
-        console.log("=====================");
+        console.log("db.json updated");    
+        console.log("---------------------------------------------------");    
      });
     res.json(true);
   });
 });
 
-//DELETE Routes
+// DELETE Routes
 // =============================================================
-
 app.delete("/api/notes/:id", function(req,res){
   var deleteId = req.params.id;
-  console.log("Item to delete is deleteId = "+ deleteId);
 
   fs.readFile("db/db.json", "utf8", function (err, data) {
     if (err) throw err;
     storedData = JSON.parse(data);;
     storedData.splice((deleteId-1),1)
-
-    // Assign a new id by indexing through the json object
+    console.log("Note " + deleteId + " deleted");
+    // Index through the storedData array reassign id's in order
     for (var i=0; i<storedData.length; i++){
       storedData[i].id = parseInt([i])+1;
     };
     
     fs.writeFile( "db/db.json", JSON.stringify(storedData), function (err) {
       if (err) throw err;
-    console.log("Item deleted. db.json updated");
-    console.log("=====================");
+    
+    console.log("db.json updated");
+    console.log("---------------------------------------------------");
    });
     res.json(storedData);
 })
 });
 
-// Starts the server to begin listening
+// Start the server to begin listening
 // =============================================================
 app.listen(PORT, function () {
-  console.log("App listening on PORT " + PORT);
+  console.log("===================================================");
+  console.log("NoteTaker is now online at PORT " + PORT);
+  console.log("---------------------------------------------------");
 });
+
+// =============================================================
+// =============================================================

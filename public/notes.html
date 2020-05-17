@@ -37,25 +37,6 @@
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="./assets/js/index.js"></script>
-
-  <!-- <script type="text/javascript">
-    // Grabbing note info
-    $(".note-textarea").on("click", function(event) {
-      event.preventDefault();
-      var newNote = {
-        noteTitle: $(".note-title").val().trim(),
-        note: $(".note-textarea").val().trim(),
-        
-      };
-
-      // Question: What does this code do??
-      $.post("/api/notes", newNote)c
-        .then(function(data) {
-          console.log("adding " + data.noteTitle + " to db.json");
-          alert("Adding note!");
-        });
-    });
-  </script> -->
 </body>
 
 </html>
